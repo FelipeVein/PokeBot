@@ -14,7 +14,7 @@ PLAYER_HUD_REGION  = (563,942, 167, 33)
 BATTLE_REGION = (1700, 390, 100, 400)
 
 
-DUNGEON_WAYPOINTS = 'dungeon_charmeleon' # nome da pasta dos waypoints
+DUNGEON_WAYPOINTS = 'map2' # nome da pasta dos waypoints
 POKECENTER_WAYPOINTS = 'pidgey_to_pokecenter' # nome da pasta dos waypoints
 
 
