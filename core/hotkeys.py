@@ -1,4 +1,0 @@
-
-
-REVIVE_HOTKEY = 'r'
-POKEBALL_HOTKEY = 'y'
