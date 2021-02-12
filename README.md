@@ -1,3 +1,3 @@
 # PokeBot
 
-## A bot for hunting and fishing.
+### A bot for hunting and fishing.
