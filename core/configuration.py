@@ -8,6 +8,8 @@ POKEMON_FOOD_HOTKEY = 'x'
 
 ATTACK_LIST = [1,2,3,4,5,6,7,8,9]
 
+POKEMON_HUD_REGION = (800,500, 300, 50)
+PLAYER_HUD_REGION  = (800,500, 300, 50) 
 
 
 DUNGEON_WAYPOINTS = 'dungeon_pidgey' # nome da pasta dos waypoints

@@ -35,6 +35,9 @@ def search_targeted():
     loc = pyautogui.locateOnScreen('.\\core\\images\\targeted3.png', confidence=.9)
     if(loc is not None):
         return True
+    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted4.png', confidence=.9)
+    if(loc is not None):
+        return True
     return False
     
     
@@ -114,9 +117,9 @@ def search_defeated():
     
 def search_hungry(which):
     if(which == 'pokemon'):
-        region = (800,500, 300, 50) # escolher regiao da tela do pokemon
+        region = POKEMON_HUD_REGION
     else:
-        region = (800,500, 300, 50) # escolher regiao da tela do player
+        region = PLAYER_HUD_REGION 
     loc = pyautogui.locateOnScreen('.\\core\\images\\hungry.png', confidence=.7, region=region) 
     if(loc is not None):
         return True
