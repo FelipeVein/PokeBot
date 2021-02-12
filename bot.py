@@ -19,6 +19,7 @@ while(not commands.check_in_game()):
 
 def fight():
     attacks = 0
+    no_target_change_counter = 0
     if(USE_FOOD):
         commands.check_hungry()
     while(commands.find_pokemon() or commands.in_fight()):
@@ -35,9 +36,12 @@ def fight():
                 if(attacks >= ATTACKS_BEFORE_REVIVE and USE_REVIVE):
                     commands.revive()
                     attacks = 0
+                no_target_change_counter += 1
+                if(no_target_change_counter > 5):
+                    commands.target_pokemon()
+                    no_target_change_counter = 0
             else:
                 commands.target_pokemon()
-            commands.loot()
             commands.catch_pokemon()
             if(GO_TO_POKECENTER):
                 if(commands.check_poke_fainted()):  

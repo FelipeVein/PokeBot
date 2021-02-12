@@ -29,13 +29,13 @@ def search_in_fight():
 
     
 def search_targeted():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted2.png', confidence=.9)
+    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted2.png', confidence=.9, region = BATTLE_REGION)
     if(loc is not None):
         return True
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted3.png', confidence=.9)
+    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted3.png', confidence=.9, region = BATTLE_REGION)
     if(loc is not None):
         return True
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted4.png', confidence=.9)
+    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted4.png', confidence=.9, region = BATTLE_REGION)
     if(loc is not None):
         return True
     return False

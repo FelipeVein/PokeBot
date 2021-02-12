@@ -59,14 +59,14 @@ class Commands():
 
     def target_pokemon(self):
         for _ in range(1):
-            pydirectinput.press("space")
+            pydirectinput.press(TARGET_HOTKEY)
     
 
     def catch_pokemon(self):
         loc = searcher.search_dead_pokemon()
         if(loc is not None):
             if(self.last_catch != [loc.left, loc.top]):
-                pydirectinput.press('e')
+                pydirectinput.press(LOOT_HOTKEY)
                 pydirectinput.press(POKEBALL_HOTKEY)
                 pyautogui.moveTo(x= loc.left+loc.width/2+10, y= loc.top+loc.height/2+10)
                 pyautogui.click(button='left')
@@ -81,6 +81,8 @@ class Commands():
     def find_pokemon(self):
         loc = searcher.search_pokemon()
         if(loc is not None):
+            pyautogui.moveTo(loc.left, loc.top)
+            pyautogui.click(button='left')
             return True
         return False
 

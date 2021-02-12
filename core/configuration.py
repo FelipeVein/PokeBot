@@ -3,29 +3,31 @@ REVIVE_HOTKEY = 'r'
 POKEBALL_HOTKEY = 'y'
 FISHING_HOTKEY = 'j'
 LOOT_HOTKEY = 'e'
-PLAYER_FOOD_HOTKEY = 'z'
-POKEMON_FOOD_HOTKEY = 'x'
+PLAYER_FOOD_HOTKEY = 'v'
+POKEMON_FOOD_HOTKEY = ';'
+TARGET_HOTKEY = 'space'
 
 ATTACK_LIST = [1,2,3,4,5,6,7,8,9]
 
 POKEMON_HUD_REGION = (800,500, 300, 50)
 PLAYER_HUD_REGION  = (800,500, 300, 50) 
+BATTLE_REGION = (1700, 390, 100, 400)
 
 
 DUNGEON_WAYPOINTS = 'dungeon_pidgey' # nome da pasta dos waypoints
 POKECENTER_WAYPOINTS = 'pidgey_to_pokecenter' # nome da pasta dos waypoints
 
 
-WHAT_TO_DO = 'fishing' # dungeon or fishing
+WHAT_TO_DO = 'dungeon' # dungeon or fishing
 
-NUM_FISHING_TIMES = 10
+NUM_FISHING_TIMES = 50
 
 
-USE_REVIVE = True
+USE_REVIVE = False
 ATTACKS_BEFORE_REVIVE = 20
 
 
-USE_FOOD = True
+USE_FOOD = False
 POKEMON_FOOD_QUANTITY = 2
 
 GO_TO_POKECENTER = False
