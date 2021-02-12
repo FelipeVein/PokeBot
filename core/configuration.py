@@ -9,12 +9,12 @@ TARGET_HOTKEY = 'space'
 
 ATTACK_LIST = [1,2,3,4,5,6,7,8,9]
 
-POKEMON_HUD_REGION = (800,500, 300, 50)
-PLAYER_HUD_REGION  = (800,500, 300, 50) 
+POKEMON_HUD_REGION = (1183,942, 167, 33)
+PLAYER_HUD_REGION  = (563,942, 167, 33) 
 BATTLE_REGION = (1700, 390, 100, 400)
 
 
-DUNGEON_WAYPOINTS = 'dungeon_pidgey' # nome da pasta dos waypoints
+DUNGEON_WAYPOINTS = 'dungeon_charmeleon' # nome da pasta dos waypoints
 POKECENTER_WAYPOINTS = 'pidgey_to_pokecenter' # nome da pasta dos waypoints
 
 
@@ -23,11 +23,11 @@ WHAT_TO_DO = 'dungeon' # dungeon or fishing
 NUM_FISHING_TIMES = 50
 
 
-USE_REVIVE = False
+USE_REVIVE = True
 ATTACKS_BEFORE_REVIVE = 20
 
 
-USE_FOOD = False
+USE_FOOD = True
 POKEMON_FOOD_QUANTITY = 2
 
 GO_TO_POKECENTER = False
@@ -36,8 +36,12 @@ GO_TO_POKECENTER = False
 
 
 
-which_pokemons = [".\\core\\images\\pidgey.png", ".\\core\\images\\tentacruel.png"]
-which_dead_pokemons = [".\\core\\dead_bodies\\pidgey.png"]
+#which_pokemons = [".\\core\\images\\pidgey.png", ".\\core\\images\\tentacruel.png"]
+#which_dead_pokemons = [".\\core\\dead_bodies\\pidgey.png"]
+
+
+which_pokemons = [".\\core\\images\\charmander.png", ".\\core\\images\\charmeleon.png"]
+which_dead_pokemons = [".\\core\\dead_bodies\\charmeleon.png"]
 
 
 
