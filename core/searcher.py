@@ -1,126 +1,132 @@
-import pyautogui
-import pydirectinput
 from core.configuration import *
+from core.actions import Actions
 
 import glob
 
+actions = Actions()
 
-def search_pokemon():
-    for pokemon in which_pokemons:
-        loc = pyautogui.locateOnScreen(pokemon, confidence=.8, grayscale = False)
+
+class Searcher():
+
+    def set_foreground_app(self, foreground_app):
+        actions._foreground_app = foreground_app
+
+    def search_pokemon(self):
+        for pokemon in which_pokemons:
+            loc = actions.locateOnScreen(pokemon, confidence=.8, grayscale = False)
+            if(loc is not None):
+                return loc
+        return None
+
+
+    def search_dead_pokemon(self):
+        for pokemon in which_dead_pokemons:
+            loc = actions.locateOnScreen(pokemon, confidence=.7, grayscale = True)
+            if(loc is not None):
+                return loc
+        return None
+
+    def search_in_fight(self):
+        loc = actions.locateOnScreen('.\\core\\images\\in_fight.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
+
+
+        
+    def search_targeted(self):
+        loc = actions.locateOnScreen('.\\core\\images\\targeted2.png', confidence=.5, region = BATTLE_REGION)
+        if(loc is not None):
+            return True
+        loc = actions.locateOnScreen('.\\core\\images\\targeted3.png', confidence=.5, region = BATTLE_REGION)
+        if(loc is not None):
+            return True
+        loc = actions.locateOnScreen('.\\core\\images\\targeted4.png', confidence=.5, region = BATTLE_REGION)
+        if(loc is not None):
+            return True
+        return False
+        
+        
+    def search_in_game(self):
+        loc = actions.locateOnScreen('.\\core\\images\\in_game.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
+
+
+        
+        
+    def search_skill(self, num):
+        loc = actions.locateOnScreen('.\\core\\numbers_skills\\'+ str(num) +'.png', confidence=.8)
         if(loc is not None):
             return loc
-    return None
+        return None
 
 
-def search_dead_pokemon():
-    for pokemon in which_dead_pokemons:
-        loc = pyautogui.locateOnScreen(pokemon, confidence=.7, grayscale = True)
+        
+    def search_map(self, num):
+        loc = actions.locateOnScreen(dungeon_waypoints[num-1], confidence=.8)
         if(loc is not None):
             return loc
-    return None
+        return None
 
-def search_in_fight():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\in_fight.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
+    def search_map_pokecenter(self, num):
+        loc = actions.locateOnScreen(pokecenter_waypoints[num], confidence=.8)
+        if(loc is not None):
+            return loc
+        return None
 
+        
+    def search_poke_out(self):
+        loc = actions.locateOnScreen('.\\core\\images\\poke_out.png', confidence=.8)
+        if(loc is not None):
+            return True
+        loc = actions.locateOnScreen('.\\core\\images\\poke_out_lista.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
 
-    
-def search_targeted():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted2.png', confidence=.9, region = BATTLE_REGION)
-    if(loc is not None):
-        return True
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted3.png', confidence=.9, region = BATTLE_REGION)
-    if(loc is not None):
-        return True
-    loc = pyautogui.locateOnScreen('.\\core\\images\\targeted4.png', confidence=.9, region = BATTLE_REGION)
-    if(loc is not None):
-        return True
-    return False
-    
-    
-def search_in_game():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\in_game.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
+    def search_poke_fainted(self):
+        loc = actions.locateOnScreen('.\\core\\fainted\\charmander.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
 
-
-    
-    
-def search_skill(num):
-    loc = pyautogui.locateOnScreen('.\\core\\numbers_skills\\'+ str(num) +'.png', confidence=.8)
-    if(loc is not None):
-        return loc
-    return None
+    def search_poke_pokeball(self):
+        loc = actions.locateOnScreen('.\\core\\pokeball\\charmander.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
 
 
-    
-def search_map(num):
-    loc = pyautogui.locateOnScreen(dungeon_waypoints[num-1], confidence=.8)
-    if(loc is not None):
-        return loc
-    return None
+    def search_fishing(self):
+        loc = actions.locateOnScreen('.\\core\\images\\fishing.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
 
-def search_map_pokecenter(num):
-    loc = pyautogui.locateOnScreen(pokecenter_waypoints[num-1], confidence=.8)
-    if(loc is not None):
-        return loc
-    return None
-
-    
-def search_poke_out():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\poke_out.png', confidence=.8)
-    if(loc is not None):
-        return True
-    loc = pyautogui.locateOnScreen('.\\core\\images\\poke_out_lista.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
-
-def search_poke_fainted():
-    loc = pyautogui.locateOnScreen('.\\core\\fainted\\charmander.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
-
-def search_poke_pokeball():
-    loc = pyautogui.locateOnScreen('.\\core\\pokeball\\charmander.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
+    def search_water(self):
+        loc = actions.locateOnScreen('.\\core\\images\\water.png', confidence=.5)
+        if(loc is not None):
+            return loc
+        return None
 
 
-def search_fishing():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\fishing.png', confidence=.8)
-    if(loc is not None):
-        return True
-    return False
+        
+    def search_defeated(self):
+        loc = actions.locateOnScreen('.\\core\\images\\defeated.png', confidence=.7, region=(800,500, 300, 50))
+        if(loc is not None):
+            return True
+        return False
 
-def search_water():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\water.png', confidence=.5)
-    if(loc is not None):
-        return loc
-    return None
-
-
-    
-def search_defeated():
-    loc = pyautogui.locateOnScreen('.\\core\\images\\defeated.png', confidence=.7, region=(800,500, 300, 50))
-    if(loc is not None):
-        return True
-    return False
-
-    
-    
-def search_hungry(which):
-    if(which == 'pokemon'):
-        region = POKEMON_HUD_REGION
-    else:
-        region = PLAYER_HUD_REGION 
-    loc = pyautogui.locateOnScreen('.\\core\\images\\hungry.png', confidence=.7, region=region) 
-    if(loc is not None):
-        return True
-    return False
+        
+        
+    def search_hungry(self, which):
+        if(which == 'pokemon'):
+            region = POKEMON_HUD_REGION
+        else:
+            region = PLAYER_HUD_REGION 
+        loc = actions.locateOnScreen('.\\core\\images\\hungry.png', confidence=.7, region=region) 
+        if(loc is not None):
+            return True
+        return False

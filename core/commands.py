@@ -1,10 +1,13 @@
-import pyautogui
-import pydirectinput
 import time
-import core.searcher as searcher
+from core.searcher import Searcher
 from core.configuration import *
+from core.actions import Actions
 
 import random
+
+actions = Actions()
+searcher = Searcher()
+
 class Commands():
     def __init__(self, pokemon_location):
         self.pokemon_location = pokemon_location
@@ -12,64 +15,61 @@ class Commands():
         self.last_place = -1
         self.last_place_pokecenter = 0
         self.last_catch = [0,0]
+        self._foreground_app = False
+    
+    def set_foreground_app(self, foreground_app):
+        actions._foreground_app = foreground_app
+        searcher.set_foreground_app(foreground_app)
+        self._foreground_app = foreground_app
 
     def attack_rotation(self):
         for i in ATTACK_LIST:
-            pydirectinput.press(str(i))
+            actions.press(str(i))
             time.sleep(0.4)
     def random_attack(self):
         i = random.randint(ATTACK_LIST[0], ATTACK_LIST[-1])
-        pydirectinput.press(str(i))
+        actions.press(str(i))
 
     
     def sequential_attack(self):
         self.last_attack += 1
         if(self.last_attack >= len(ATTACK_LIST)):
             self.last_attack = 0
-        pydirectinput.press(str(ATTACK_LIST[self.last_attack]))
+        actions.press(str(ATTACK_LIST[self.last_attack]))
 
     def click_first_pokemon(self):
-        pyautogui.moveTo(x = self.pokemon_location[0], y = self.pokemon_location[1])
-        pyautogui.click(button='left')
+        actions.moveTo(x = self.pokemon_location[0], y = self.pokemon_location[1])
+        actions.click(button='left')
     
     def click_random_pokemon(self):
         correct = random.randint(0,5) * 50
-        pyautogui.moveTo(x = self.pokemon_location[0], y = self.pokemon_location[1] + correct)
-        pyautogui.click(button='left')
+        actions.moveTo(x = self.pokemon_location[0], y = self.pokemon_location[1] + correct)
+        actions.click(button='left')
 
 
 
     def revive(self):
         self.click_first_pokemon()
         time.sleep(0.1)
-        pydirectinput.press(REVIVE_HOTKEY)
+        actions.press(REVIVE_HOTKEY)
         self.click_first_pokemon()
         time.sleep(0.1)
         self.click_first_pokemon()
-        '''pyautogui.click(button='right',x = 36, y = 52)
-        time.sleep(0.1)
-        pyautogui.moveTo(x= 730, y= 1015)
-        pyautogui.click(button='left')
-        time.sleep(0.1)
-        pyautogui.moveTo(x = 36, y = 52)
-        pyautogui.click(button='left')
-        time.sleep(0.1)
-        pyautogui.click(button='right',x = 36, y = 52)'''
     
 
     def target_pokemon(self):
         for _ in range(1):
-            pydirectinput.press(TARGET_HOTKEY)
+            actions.press(TARGET_HOTKEY)
     
 
     def catch_pokemon(self):
         loc = searcher.search_dead_pokemon()
         if(loc is not None):
             if(self.last_catch != [loc.left, loc.top]):
-                pydirectinput.press(LOOT_HOTKEY)
-                pydirectinput.press(POKEBALL_HOTKEY)
-                pyautogui.moveTo(x= loc.left+loc.width/2+10, y= loc.top+loc.height/2+10)
-                pyautogui.click(button='left')
+                actions.press(LOOT_HOTKEY)
+                actions.press(POKEBALL_HOTKEY)
+                actions.moveTo(x= loc.left+loc.width/2+10, y= loc.top+loc.height/2+10)
+                actions.click(button='left')
                 self.last_catch = [loc.left, loc.top]
                 return True
         self.last_catch = [0,0]
@@ -81,8 +81,6 @@ class Commands():
     def find_pokemon(self):
         loc = searcher.search_pokemon()
         if(loc is not None):
-            pyautogui.moveTo(loc.left, loc.top)
-            pyautogui.click(button='left')
             return True
         return False
 
@@ -94,16 +92,17 @@ class Commands():
     
 
     def walk(self):
-        self.last_place += 1
-        if(self.last_place > len(dungeon_waypoints) or self.last_place <= 0):
-            self.last_place = 1
-        
-        loc = searcher.search_map(self.last_place)
-        if(loc is not None):
-            pyautogui.moveTo(loc.left, loc.top)
-            pyautogui.click(button='left')
-        else:
-            self.walk()
+        if(self._foreground_app):
+            self.last_place += 1
+            if(self.last_place > len(dungeon_waypoints) or self.last_place <= 0):
+                self.last_place = 1
+            
+            loc = searcher.search_map(self.last_place)
+            if(loc is not None):
+                actions.moveTo(loc.left, loc.top)
+                actions.click(button='left')
+            else:
+                self.walk()
 
     
     def poke_out(self):
@@ -127,20 +126,21 @@ class Commands():
             time.sleep(15)
     
     def walk_to_pokecenter(self):
-        self.last_place_pokecenter += 1
-        if(self.last_place_pokecenter > len(pokecenter_waypoints) or self.last_place_pokecenter <= 0):
-            self.last_place_pokecenter = -1
-            return
-        
-        loc = searcher.search_map_pokecenter(self.last_place_pokecenter)
-        if(loc is not None):
-            pyautogui.moveTo(loc.left, loc.top)
-            if(self.last_place_pokecenter == 8):
-                pyautogui.click(button='right')
+        if(self._foreground_app):
+            self.last_place_pokecenter += 1
+            if(self.last_place_pokecenter > len(pokecenter_waypoints) or self.last_place_pokecenter <= 0):
+                self.last_place_pokecenter = 0
+                return
+            
+            loc = searcher.search_map_pokecenter(self.last_place_pokecenter)
+            if(loc is not None):
+                actions.moveTo(loc.left, loc.top)
+                if(self.last_place_pokecenter == 8):
+                    actions.click(button='right')
+                else:
+                    actions.click(button='left')
             else:
-                pyautogui.click(button='left')
-        else:
-            self.walk_to_pokecenter()
+                self.walk_to_pokecenter()
         
 
     def no_poke_out(self):
@@ -153,7 +153,7 @@ class Commands():
         for _ in range(num_times):
             while(not searcher.search_fishing()):
                 pass
-            pydirectinput.press(FISHING_HOTKEY)
+            actions.press(FISHING_HOTKEY)
             time.sleep(1)
             while(not self.throw_fishing_rod()):
                 pass
@@ -164,21 +164,21 @@ class Commands():
         loc = searcher.search_water()
 
         if(loc is not None):
-            pydirectinput.press(FISHING_HOTKEY)
-            pyautogui.moveTo(loc.left, loc.top)
+            actions.press(FISHING_HOTKEY)
+            actions.moveTo(loc.left, loc.top)
             time.sleep(0.1)
-            pyautogui.click(button='left')
+            actions.click(button='left')
             return True
         return False
 
     def loot(self):
-        pydirectinput.press(LOOT_HOTKEY)
+        actions.press(LOOT_HOTKEY)
 
     
     def eat_food(self):
-        pydirectinput.press(PLAYER_FOOD_HOTKEY)
+        actions.press(PLAYER_FOOD_HOTKEY)
     def give_food(self):
-        pydirectinput.press(POKEMON_FOOD_HOTKEY)
+        actions.press(POKEMON_FOOD_HOTKEY)
 
     def check_hungry(self):
         if(searcher.search_hungry('pokemon')):
@@ -194,9 +194,9 @@ class Commands():
         window = [230, 170, 1630, 870]
         import itertools
         for i, j in itertools.product(range(window[0], window[2], 100), range(window[1], window[3], 100)):
-            pyautogui.moveTo(x=i, y=j)
+            actions.moveTo(x=i, y=j)
             pydirectinput.keyDown('shift')
-            pyautogui.click(button='left')
+            actions.click(button='left')
             pydirectinput.keyUp('shift')
             searcher.search_defeated()
     '''
