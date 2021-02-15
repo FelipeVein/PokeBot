@@ -236,6 +236,17 @@ class Commands():
         with open('.\\core\\map\\' + DUNGEON_WAYPOINTS + '\\' + DUNGEON_WAYPOINTS + '.csv', 'r') as f:
             for _, line in enumerate(f):
                 self.path_to_follow.append([int(a) for a in line.split(',')])
+        closer = 0
+        distance = 1000000
+        for i,point in enumerate(self.path_to_follow):
+            error = [0,0]
+            error[0] = point[0] - self._coordinates[0]
+            error[1] = point[1] - self._coordinates[1]
+            d = (error[0] + error[1]) ** 2
+            if(d < distance):
+                closer = i
+                distance = d
+        self.point_path = closer
         
     def follow_path(self):
         if(self.path_to_follow is not []):
@@ -246,9 +257,9 @@ class Commands():
             error = [0,0]
             error[0] = next_point[0] - self._coordinates[0]
             error[1] = next_point[1] - self._coordinates[1]
-            print(self._coordinates)
-            print(next_point)
-            print(error)
+            #print(self._coordinates)
+            #print(next_point)
+            #print(error)
             if(error[0] > 0):
                 actions.press('d')
             if(error[0] < 0):
@@ -259,6 +270,9 @@ class Commands():
                 actions.press('w')
             if(error[0] == 0 and error[1] == 0):
                 self.point_path += 1
+    
+    def check_chat_on(self):
+        return searcher.search_chat_on()
 
 
 
