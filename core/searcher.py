@@ -144,3 +144,10 @@ class Searcher():
                 findings_list.append([number,loc])
         return findings_list
 
+
+
+    def search_chat_on(self):
+        loc = actions.locateOnScreen('.\\core\\images\\chat_on.png', confidence=.8)
+        if(loc is not None):
+            return True
+        return False
