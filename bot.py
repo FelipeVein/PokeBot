@@ -21,7 +21,7 @@ _pause = False
 
 # Thread to check if the foreground app is pokexgames
 def verify_foreground_application():
-    global _foreground_app, _kill_thread
+    global _foreground_app, _kill_thread, _pause
     while(not _kill_thread):
         if(commands.check_chat_on() == True or _pause == True):
             _foreground_app = False
@@ -40,9 +40,10 @@ def check_coordinates():
         #print(_coordinates)
         time.sleep(0.1)
 
-def pause_bot():
+def pause_bot(a):
     global _pause
     _pause = not _pause
+    print("Pause: ", _pause)
 
 
 
@@ -95,7 +96,7 @@ def main():
     coordinates_thread = threading.Thread(target=check_coordinates, name="CoordinatesThread")
     coordinates_thread.start()
 
-    keyboard.on_press_key("p", pause_bot())
+    keyboard.on_press_key("esc", pause_bot)
     
     while(not commands.check_in_game()):
         pass
