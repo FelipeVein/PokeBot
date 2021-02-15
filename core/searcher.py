@@ -130,3 +130,17 @@ class Searcher():
         if(loc is not None):
             return True
         return False
+
+
+
+    def search_coordinates(self):
+        findings_list = []
+        img = actions.screenshot(region=COORDINATE_REGION, debug=False)
+        for i in coordinate_numbers:
+            number = i.split("\\")[-1].split('.')[0]
+            loc = actions.locateAll(i, img, confidence=.75, debug=False) 
+            loc = [a.left for a in loc]
+            if(len(loc) > 0):
+                findings_list.append([number,loc])
+        return findings_list
+

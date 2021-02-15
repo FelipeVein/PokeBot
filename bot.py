@@ -2,6 +2,7 @@ import pyautogui
 import pydirectinput
 from core.commands import Commands
 from core.configuration import *
+from core.record_path import *
 import time
 from win32gui import GetWindowText, GetForegroundWindow
 import threading
@@ -13,6 +14,7 @@ commands = Commands([36, 52]) # posicao do primeiro pokemon para o revive
 _kill_thread = False
 _attacks = 0
 _foreground_app = False
+_coordinates = [0,0,0]
 
 
 # Thread to check if the foreground app is pokexgames
@@ -21,10 +23,17 @@ def verify_foreground_application():
     while(not _kill_thread):
         _foreground_app = GetWindowText(GetForegroundWindow()) == 'PokeXGames'
         commands.set_foreground_app(_foreground_app)
-        print(_foreground_app)
+        #print(_foreground_app)
         time.sleep(1)
 
-
+def check_coordinates():
+    global _coordinates
+    while(not _kill_thread):
+        loc = commands.find_coordinates()
+        _coordinates =  loc if loc is not None else _coordinates
+        commands.set_coordinates(_coordinates)
+        #print(_coordinates)
+        time.sleep(0.1)
 
 
 
@@ -37,18 +46,15 @@ def fight():
     if(USE_FOOD):
         commands.check_hungry()
     while(commands.find_pokemon() or commands.in_fight() or not _foreground_app):
-        commands.target_pokemon()
-        if(time.time() - initial_time >= 20): 
-                break
-        while(commands.in_fight() or not _foreground_app):
-            if(time.time() - initial_time >= 20): 
-                break
+        if(not commands.targeted()):
+            commands.target_pokemon()
+        while(commands.in_fight()):
             if(commands.no_poke_out()):
                 commands.click_first_pokemon()
             #if(not commands.poke_out()):
             #    commands.click_random_pokemon()
             #commands.attack_rotation()
-            if(commands.targeted()):
+            if(commands.targeted() and commands.find_poke_battle()):
                 commands.sequential_attack()
                 _attacks += 1
                 if(_attacks >= ATTACKS_BEFORE_REVIVE and USE_REVIVE):
@@ -61,9 +67,13 @@ def fight():
             else:
                 commands.target_pokemon()
             commands.catch_pokemon()
-            if(GO_TO_POKECENTER):
-                if(commands.check_poke_fainted()):  
-                    commands.go_to_pokecenter()
+            #if(GO_TO_POKECENTER):
+            #    if(commands.check_poke_fainted()):  
+            #        commands.go_to_pokecenter()
+            if(time.time() - initial_time >= TIME_TO_WAIT_IN_BATTLE or not commands.find_poke_battle()): 
+                break
+        if(time.time() - initial_time >= TIME_TO_WAIT_IN_BATTLE or not commands.find_poke_battle()): 
+                break
     initial_time = time.time()
     while(time.time() - initial_time < TIME_TO_WAIT_FOR_CAPTURE):
         commands.catch_pokemon()
@@ -74,6 +84,8 @@ def fight():
 def main():
     foreground = threading.Thread(target=verify_foreground_application, name="ForegroundApp")
     foreground.start()
+    coordinates_thread = threading.Thread(target=check_coordinates, name="CoordinatesThread")
+    coordinates_thread.start()
     
     while(not commands.check_in_game()):
         pass
@@ -88,6 +100,25 @@ def main():
 
     if(WHAT_TO_DO == 'fishing'):
         commands.go_fishing(fight,num_times = NUM_FISHING_TIMES)
+    if(WHAT_TO_DO == 'record'):
+        record_path(commands)
+    if(WHAT_TO_DO == 'follow'):
+        commands.load_path()
+        #from core.record_path import record_path
+        #record_path(commands)
+        while(True):
+            fight()
+            commands.follow_path()
+        #while(True):
+        #time.sleep(1)
+        #print(searcher.search_coordinates())
+        #aaa = time.time()
+        #print(commands.find_poke_battle())
+        #aaa = searcher.search_poke_battle()
+        #if(aaa > 0):
+        #    print(aaa)
+        #print(commands.find_coordinates())
+        #print(time.time() - aaa)
 
 
 

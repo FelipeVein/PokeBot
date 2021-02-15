@@ -2,6 +2,8 @@ import time
 from core.searcher import Searcher
 from core.configuration import *
 from core.actions import Actions
+import cv2
+import numpy as np
 
 import random
 
@@ -16,11 +18,18 @@ class Commands():
         self.last_place_pokecenter = 0
         self.last_catch = [0,0]
         self._foreground_app = False
+        self._coordinates = [0,0,0]
+        self.path_to_follow = []
+        self.point_path = 0
     
     def set_foreground_app(self, foreground_app):
         actions._foreground_app = foreground_app
         searcher.set_foreground_app(foreground_app)
         self._foreground_app = foreground_app
+    
+    def set_coordinates(self, loc):
+        self._coordinates = loc
+    
 
     def attack_rotation(self):
         for i in ATTACK_LIST:
@@ -50,10 +59,10 @@ class Commands():
 
     def revive(self):
         self.click_first_pokemon()
-        time.sleep(0.1)
+        time.sleep(0.01)
         actions.press(REVIVE_HOTKEY)
         self.click_first_pokemon()
-        time.sleep(0.1)
+        time.sleep(0.01)
         self.click_first_pokemon()
     
 
@@ -186,6 +195,71 @@ class Commands():
                 self.give_food()
         if(searcher.search_hungry('player')):
             self.eat_food()
+        
+    
+    def find_coordinates(self):
+        coord = searcher.search_coordinates()
+        list_char = []
+        list_loc = []
+        for i in coord:
+            for j in i[1]:
+                list_loc.append(j)
+                list_char.append(i[0])
+        zipped = zip(list_loc, list_char)
+        sorted_zipped = sorted(zipped)
+        sorted_list_char = [e for _, e in sorted_zipped]
+        string = ''.join(map(str, sorted_list_char)) 
+        loc = string.split(',')
+        loc = [a for a in loc if a is not '']
+        if(len(loc) != 3):
+            return None
+        try:
+            loc = [int(a) for a in loc]
+        except:
+            return None
+            
+        return loc
+    
+
+    def find_poke_battle(self):
+        img = actions.screenshot(region = BATTLE_POKEMONS_REGION)
+        if(img is not None):
+            hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
+            (h, s, v) = cv2.split(hsv)
+            saturation = np.mean(s)
+            if(saturation > 50):
+                return True
+        return False
+
+    def load_path(self):
+        self.path_to_follow = []
+        with open('.\\core\\map\\' + DUNGEON_WAYPOINTS + '\\' + DUNGEON_WAYPOINTS + '.csv', 'r') as f:
+            for _, line in enumerate(f):
+                self.path_to_follow.append([int(a) for a in line.split(',')])
+        
+    def follow_path(self):
+        if(self.path_to_follow is not []):
+            if(self.point_path >= len(self.path_to_follow)):
+                self.point_path = 0
+            next_point = self.path_to_follow[self.point_path]
+            #error = [a-b for a in next_point[0:2] for b in self._coordinates[0:2]]
+            error = [0,0]
+            error[0] = next_point[0] - self._coordinates[0]
+            error[1] = next_point[1] - self._coordinates[1]
+            print(self._coordinates)
+            print(next_point)
+            print(error)
+            if(error[0] > 0):
+                actions.press('d')
+            if(error[0] < 0):
+                actions.press('a')
+            if(error[1] > 0):
+                actions.press('s')
+            if(error[1] < 0):
+                actions.press('w')
+            if(error[0] == 0 and error[1] == 0):
+                self.point_path += 1
+
 
 
 
