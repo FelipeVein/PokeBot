@@ -7,6 +7,7 @@ import time
 from win32gui import GetWindowText, GetForegroundWindow
 import threading
 import sys
+import keyboard
 
 commands = Commands([36, 52]) # posicao do primeiro pokemon para o revive
 
@@ -15,13 +16,14 @@ _kill_thread = False
 _attacks = 0
 _foreground_app = False
 _coordinates = [0,0,0]
+_pause = False
 
 
 # Thread to check if the foreground app is pokexgames
 def verify_foreground_application():
     global _foreground_app, _kill_thread
     while(not _kill_thread):
-        if(commands.check_chat_on() == True):
+        if(commands.check_chat_on() == True or _pause == True):
             _foreground_app = False
         else:
             _foreground_app = GetWindowText(GetForegroundWindow()) == 'PokeXGames'
@@ -38,6 +40,9 @@ def check_coordinates():
         #print(_coordinates)
         time.sleep(0.1)
 
+def pause_bot():
+    global _pause
+    _pause = not _pause
 
 
 
@@ -89,6 +94,8 @@ def main():
     foreground.start()
     coordinates_thread = threading.Thread(target=check_coordinates, name="CoordinatesThread")
     coordinates_thread.start()
+
+    keyboard.on_press_key("p", pause_bot())
     
     while(not commands.check_in_game()):
         pass
@@ -106,7 +113,7 @@ def main():
     if(WHAT_TO_DO == 'record'):
         record_path(commands)
     if(WHAT_TO_DO == 'follow'):
-        time.sleep(2)
+        time.sleep(1)
         commands.load_path()
         #from core.record_path import record_path
         #record_path(commands)
