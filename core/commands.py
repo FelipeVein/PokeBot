@@ -242,11 +242,12 @@ class Commands():
             error = [0,0]
             error[0] = point[0] - self._coordinates[0]
             error[1] = point[1] - self._coordinates[1]
-            d = (error[0] + error[1]) ** 2
+            d = (error[0]**2 + error[1]**2) ** 2
             if(d < distance):
                 closer = i
                 distance = d
         self.point_path = closer
+        print(self.point_path)
         
     def follow_path(self):
         if(self.path_to_follow is not []):
@@ -268,7 +269,9 @@ class Commands():
                 actions.press('s')
             if(error[1] < 0):
                 actions.press('w')
-            if(error[0] == 0 and error[1] == 0):
+            if(error[0] == 0):
+                self.point_path += 1
+            if(error[0] > 100 or error[1] > 100):
                 self.point_path += 1
     
     def check_chat_on(self):
