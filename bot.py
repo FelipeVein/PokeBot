@@ -21,10 +21,13 @@ _coordinates = [0,0,0]
 def verify_foreground_application():
     global _foreground_app, _kill_thread
     while(not _kill_thread):
-        _foreground_app = GetWindowText(GetForegroundWindow()) == 'PokeXGames'
+        if(commands.check_chat_on() == True):
+            _foreground_app = False
+        else:
+            _foreground_app = GetWindowText(GetForegroundWindow()) == 'PokeXGames'
         commands.set_foreground_app(_foreground_app)
         #print(_foreground_app)
-        time.sleep(1)
+        #time.sleep(1)
 
 def check_coordinates():
     global _coordinates
@@ -103,12 +106,14 @@ def main():
     if(WHAT_TO_DO == 'record'):
         record_path(commands)
     if(WHAT_TO_DO == 'follow'):
+        time.sleep(2)
         commands.load_path()
         #from core.record_path import record_path
         #record_path(commands)
         while(True):
             fight()
-            commands.follow_path()
+            for _ in range(10):
+                commands.follow_path()
         #while(True):
         #time.sleep(1)
         #print(searcher.search_coordinates())
